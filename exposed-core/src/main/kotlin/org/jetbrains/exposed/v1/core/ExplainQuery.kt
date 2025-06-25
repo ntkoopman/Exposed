@@ -4,6 +4,7 @@ import org.jetbrains.exposed.v1.core.statements.Statement
 import org.jetbrains.exposed.v1.core.statements.StatementType
 import org.jetbrains.exposed.v1.core.statements.api.ResultApi
 import org.jetbrains.exposed.v1.core.statements.api.RowApi
+import java.sql.SQLException
 
 /**
  * Represents the SQL query that obtains information about a statement execution plan.
@@ -35,12 +36,17 @@ class ExplainResultRow(
 ) {
     override fun toString(): String = fieldIndex.entries.joinToString { "${it.key}=${data[it.value]}" }
 
+    @Suppress("SwallowedException")
     companion object {
         /** Creates an [ExplainResultRow] storing all fields in [fieldIndex] with their values retrieved from a [RowApi]. */
         fun create(rs: RowApi, fieldIndex: Map<String, Int>): ExplainResultRow {
             val fieldValues = arrayOfNulls<Any?>(fieldIndex.size)
             fieldIndex.values.forEach { index ->
-                fieldValues[index] = rs.getObject(index + 1, String::class.java, TextColumnType())
+                fieldValues[index] = try {
+                    rs.getObject(index + 1, String::class.java, TextColumnType())
+                } catch (e: SQLException) {
+                    rs.getObject(index + 1)
+                }
             }
             return ExplainResultRow(fieldIndex, fieldValues)
         }

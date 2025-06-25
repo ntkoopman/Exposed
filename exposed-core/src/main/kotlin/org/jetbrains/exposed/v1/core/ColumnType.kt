@@ -16,6 +16,7 @@ import java.math.RoundingMode
 import java.nio.ByteBuffer
 import java.sql.Blob
 import java.sql.Clob
+import java.sql.SQLException
 import java.util.*
 import kotlin.reflect.KClass
 import kotlin.reflect.full.isSubclassOf
@@ -1108,8 +1109,13 @@ class BooleanColumnType : ColumnType<Boolean>() {
         else -> value
     }
 
+    @Suppress("SwallowedException")
     override fun readObject(rs: RowApi, index: Int): Any? {
-        return rs.getObject(index, Boolean::class.java, this)
+        return try {
+            rs.getObject(index, Boolean::class.java, this)
+        } catch (e: SQLException) {
+            rs.getObject(index)
+        }
     }
 
     companion object {
