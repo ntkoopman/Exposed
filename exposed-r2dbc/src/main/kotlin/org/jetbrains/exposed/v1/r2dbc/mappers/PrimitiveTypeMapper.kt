@@ -1,5 +1,7 @@
 package org.jetbrains.exposed.v1.r2dbc.mappers
 
+import io.r2dbc.postgresql.codec.Json
+import io.r2dbc.spi.Row
 import io.r2dbc.spi.Statement
 import org.jetbrains.exposed.v1.core.*
 import org.jetbrains.exposed.v1.core.vendors.DatabaseDialect
@@ -62,5 +64,20 @@ class PrimitiveTypeMapper : TypeMapper {
         }
         statement.bindNull(index - 1, columnValueType)
         return true
+    }
+
+    @Suppress("UNCHECKED_CAST", "SwallowedException")
+    override fun <T> getValue(row: Row, type: Class<T>, index: Int, dialect: DatabaseDialect, columnType: IColumnType<*>): ValueContainer<T?> {
+        try {
+            return PresentValueContainer(row.get(index - 1, type))
+        } catch (e: IllegalArgumentException) {
+            val value = row.get(index - 1)
+            return when (value) {
+                // It will return always the string, event if it doesn't match `type`
+                // But Json could be fetched even with BooleanColumnType that expects that String could be returned
+                is Json -> PresentValueContainer(value.asString() as T)
+                else -> NoValueContainer()
+            }
+        }
     }
 }

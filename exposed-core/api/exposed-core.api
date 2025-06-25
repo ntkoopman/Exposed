@@ -211,6 +211,7 @@ public final class org/jetbrains/exposed/v1/core/BooleanColumnType : org/jetbrai
 	public fun nonNullValueToString (Z)Ljava/lang/String;
 	public synthetic fun notNullValueToDB (Ljava/lang/Object;)Ljava/lang/Object;
 	public fun notNullValueToDB (Z)Ljava/lang/Object;
+	public fun readObject (Lorg/jetbrains/exposed/v1/core/statements/api/RowApi;I)Ljava/lang/Object;
 	public fun sqlType ()Ljava/lang/String;
 	public fun valueFromDB (Ljava/lang/Object;)Ljava/lang/Boolean;
 	public synthetic fun valueFromDB (Ljava/lang/Object;)Ljava/lang/Object;
@@ -2407,6 +2408,7 @@ public class org/jetbrains/exposed/v1/core/VarCharColumnType : org/jetbrains/exp
 	public final fun getColLength ()I
 	public fun hashCode ()I
 	public fun preciseType ()Ljava/lang/String;
+	public fun readObject (Lorg/jetbrains/exposed/v1/core/statements/api/RowApi;I)Ljava/lang/Object;
 	public fun sqlType ()Ljava/lang/String;
 	public synthetic fun validateValueBeforeUpdate (Ljava/lang/Object;)V
 	public fun validateValueBeforeUpdate (Ljava/lang/String;)V

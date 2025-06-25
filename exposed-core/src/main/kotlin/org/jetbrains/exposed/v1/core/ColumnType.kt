@@ -899,6 +899,10 @@ open class VarCharColumnType(
         result = 31 * result + colLength
         return result
     }
+
+    override fun readObject(rs: RowApi, index: Int): Any? {
+        return rs.getObject(index, String::class.java, this)
+    }
 }
 
 /**
@@ -1102,6 +1106,10 @@ class BooleanColumnType : ColumnType<Boolean>() {
             nonNullValueToString(value)
 
         else -> value
+    }
+
+    override fun readObject(rs: RowApi, index: Int): Any? {
+        return rs.getObject(index, Boolean::class.java, this)
     }
 
     companion object {

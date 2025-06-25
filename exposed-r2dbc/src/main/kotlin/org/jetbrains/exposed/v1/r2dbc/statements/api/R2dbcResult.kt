@@ -1,6 +1,5 @@
 package org.jetbrains.exposed.v1.r2dbc.statements.api
 
-import io.r2dbc.postgresql.codec.Json
 import io.r2dbc.spi.Result
 import io.r2dbc.spi.Row
 import io.r2dbc.spi.RowMetadata
@@ -13,7 +12,6 @@ import kotlinx.coroutines.reactive.collect
 import org.jetbrains.exposed.v1.core.ColumnType
 import org.jetbrains.exposed.v1.core.statements.api.ResultApi
 import org.jetbrains.exposed.v1.core.statements.api.RowApi
-import org.jetbrains.exposed.v1.core.vendors.PostgreSQLDialect
 import org.jetbrains.exposed.v1.core.vendors.currentDialect
 import org.jetbrains.exposed.v1.r2dbc.mappers.R2dbcTypeMapping
 import org.reactivestreams.Publisher
@@ -88,12 +86,7 @@ class R2dbcResult internal constructor(
  */
 class R2DBCRow(val row: Row, private val typeMapping: R2dbcTypeMapping) : RowApi {
     override fun getObject(index: Int): Any? {
-        val result = row.get(index - 1)
-        // the only way to avoid this would be to introduce getValue() functionality to TypeMapper
-        return when {
-            currentDialect is PostgreSQLDialect && result is Json -> result.asString()
-            else -> result
-        }
+        return row.get(index - 1)
     }
 
     override fun getObject(name: String): Any? = row.get(name)

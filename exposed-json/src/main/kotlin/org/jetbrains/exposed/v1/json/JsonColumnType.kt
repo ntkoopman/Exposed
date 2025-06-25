@@ -8,6 +8,7 @@ import org.jetbrains.exposed.v1.core.ColumnType
 import org.jetbrains.exposed.v1.core.JsonColumnMarker
 import org.jetbrains.exposed.v1.core.Table
 import org.jetbrains.exposed.v1.core.statements.api.PreparedStatementApi
+import org.jetbrains.exposed.v1.core.statements.api.RowApi
 import org.jetbrains.exposed.v1.core.vendors.H2Dialect
 import org.jetbrains.exposed.v1.core.vendors.PostgreSQLDialect
 import org.jetbrains.exposed.v1.core.vendors.currentDialect
@@ -70,6 +71,10 @@ open class JsonColumnType<T : Any>(
             else -> value
         }
         super.setParameter(stmt, index, parameterValue)
+    }
+
+    override fun readObject(rs: RowApi, index: Int): Any? {
+        return rs.getObject(index, String::class.java, this)
     }
 
     override fun nonNullValueAsDefaultString(value: T): String {

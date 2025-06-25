@@ -40,7 +40,7 @@ class ExplainResultRow(
         fun create(rs: RowApi, fieldIndex: Map<String, Int>): ExplainResultRow {
             val fieldValues = arrayOfNulls<Any?>(fieldIndex.size)
             fieldIndex.values.forEach { index ->
-                fieldValues[index] = rs.getObject(index + 1)
+                fieldValues[index] = rs.getObject(index + 1, String::class.java, TextColumnType())
             }
             return ExplainResultRow(fieldIndex, fieldValues)
         }
