@@ -13,6 +13,7 @@ import org.jetbrains.exposed.v1.core.vendors.H2Dialect
 import org.jetbrains.exposed.v1.core.vendors.PostgreSQLDialect
 import org.jetbrains.exposed.v1.core.vendors.currentDialect
 import org.postgresql.util.PGobject
+import java.sql.SQLException
 
 /**
  * Column for storing JSON data, either in non-binary text format or the vendor's default JSON type format.
@@ -73,8 +74,13 @@ open class JsonColumnType<T : Any>(
         super.setParameter(stmt, index, parameterValue)
     }
 
+    @Suppress("SwallowedException")
     override fun readObject(rs: RowApi, index: Int): Any? {
-        return rs.getObject(index, String::class.java, this)
+        return try {
+            rs.getObject(index, String::class.java, this)
+        } catch (e: SQLException) {
+            super.readObject(rs, index)
+        }
     }
 
     override fun nonNullValueAsDefaultString(value: T): String {

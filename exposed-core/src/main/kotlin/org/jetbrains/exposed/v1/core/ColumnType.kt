@@ -1114,7 +1114,7 @@ class BooleanColumnType : ColumnType<Boolean>() {
         return try {
             rs.getObject(index, Boolean::class.java, this)
         } catch (e: SQLException) {
-            rs.getObject(index)
+            super.readObject(rs, index)
         }
     }
 
